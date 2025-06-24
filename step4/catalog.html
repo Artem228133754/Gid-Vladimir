@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Достопримечательности — Онлайн-гид Владимир</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Достопримечательности города Владимира</h1>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="catalog.html">Достопримечательности</a>
+      <a href="contact.html">Контакты</a>
+    </nav>
+  </header>
+
+  <div class="main-content">
+    <section class="search-sort">
+      <input type="text" placeholder="Поиск по достопримечательностям..." id="searchInput">
+      <div class="sort-buttons">
+        <button id="sortAsc">Сортировать по дате ↑</button>
+        <button id="sortDesc">Сортировать по дате ↓</button>
+      </div>
+    </section>
+
+    <section class="places-list">
+      <div class="place" data-name="успенский собор" data-year="1158">
+        <img src="uspenskiy-sobor.webp" alt="Успенский собор">
+        <h2>Успенский собор</h2>
+        <p><strong>Год основания:</strong> 1158</p>
+        <p>Успенский собор — один из самых известных памятников древнерусской архитектуры. Построен в XII веке при князе Андрее Боголюбском. Здесь хранились важнейшие реликвии и иконы.</p>
+        <a href="detail.html" class="detail-link">Подробнее</a>
+      </div>
+
+      <div class="place" data-name="золотые ворота" data-year="1164">
+        <img src="golden-gate.jpg" alt="Золотые ворота">
+        <h2>Золотые ворота</h2>
+        <p><strong>Год основания:</strong> 1164</p>
+        <p>Золотые ворота — символ города Владимира и уникальный памятник оборонительной архитектуры. Они были построены как главный въезд в город с западной стороны.</p>
+      </div>
+
+      <div class="place" data-name="боголюбово" data-year="1165">
+        <img src="bogolyubovo.jpg" alt="Боголюбово">
+        <h2>Боголюбово</h2>
+        <p><strong>Год основания:</strong> 1165</p>
+        <p>Село Боголюбово известно благодаря храму Покрова на Нерли. Построен в 1165 году и считается архитектурным шедевром. Это место связано с князем Андреем Боголюбским.</p>
+      </div>
+
+      <div class="place" data-name="музей хрусталя" data-year="1974">
+        <img src="museum-crystal.jpg" alt="Музей хрусталя">
+        <h2>Музей хрусталя</h2>
+        <p><strong>Год основания:</strong> 1974</p>
+        <p>Музей хрусталя расположен в бывшей церкви и представляет уникальную коллекцию изделий из стекла и хрусталя. Работы мастеров из Гусь-Хрустального.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    &copy; 2025 Онлайн-гид по городу Владимир
+  </footer>
+<script>
+  const searchInput = document.querySelector('input[type="text"]');
+  const placeList = document.querySelector('.places-list');
+  const allPlaces = Array.from(document.querySelectorAll('.place'));
+
+  const controls = document.createElement('div');
+  controls.style.margin = '20px 0';
+  controls.style.display = 'flex';
+  controls.style.flexWrap = 'wrap';
+  controls.style.gap = '10px';
+  controls.innerHTML = `
+    <button id="prevPage">← Назад</button>
+    <button id="nextPage">Вперёд →</button>
+  `;
+  document.querySelector('.search-sort').appendChild(controls);
+
+  let currentPage = 1;
+  const itemsPerPage = 2;
+
+  function getVisiblePlaces() {
+    const query = searchInput.value.toLowerCase();
+    return allPlaces.filter(place => place.dataset.name.toLowerCase().includes(query));
+  }
+
+  function renderPage(pageNumber) {
+    const visiblePlaces = getVisiblePlaces();
+    const totalPages = Math.ceil(visiblePlaces.length / itemsPerPage);
+
+    currentPage = Math.max(1, Math.min(pageNumber, totalPages));
+
+    // Очистка контейнера
+    placeList.innerHTML = '';
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const placesToShow = visiblePlaces.slice(start, end);
+
+    placesToShow.forEach(place => placeList.appendChild(place.cloneNode(true)));
+
+    updatePlaceWidths();
+  }
+
+  function sortPlaces(ascending = true) {
+    allPlaces.sort((a, b) => {
+      const yearA = parseInt(a.dataset.year);
+      const yearB = parseInt(b.dataset.year);
+      return ascending ? yearA - yearB : yearB - yearA;
+    });
+
+    renderPage(1);
+  }
+
+  function updatePlaceWidths() {
+    const items = document.querySelectorAll('.places-list .place');
+    items.forEach(item => {
+      item.style.flex = '1 1 calc(50% - 20px)';
+      item.style.maxWidth = 'calc(50% - 20px)';
+    });
+  }
+
+  searchInput.addEventListener('input', () => renderPage(1));
+  document.getElementById('sortAsc').addEventListener('click', () => sortPlaces(true));
+  document.getElementById('sortDesc').addEventListener('click', () => sortPlaces(false));
+  document.getElementById('prevPage').addEventListener('click', () => renderPage(currentPage - 1));
+  document.getElementById('nextPage').addEventListener('click', () => renderPage(currentPage + 1));
+
+  renderPage(1);
+</script>
+
+
+
+
+</body>
+</html>
